@@ -1,29 +1,52 @@
 version: 2.1
 
 jobs:
-  deploy:
-    docker:
-      - image: cimg/base:stable
+deploy:
+docker:
+- image: cimg/base
 
-    steps:
-      - checkout
+steps:
+  - checkout
 
-      - add_ssh_keys
+  - add_ssh_keys
 
-      - run:
-          name: Deploy
-          command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@3.120.129.83 '
-              cd ~/seo-app &&
-              git pull &&
-              cd client &&
-              npm run build &&
-              pm2 restart frontend &&
-              pm2 restart backend &&
-              pm2 save
-            '
+  - run:
+      name: Deploy to EC2
+      command: |
+        ssh -o StrictHostKeyChecking=no ubuntu@3.120.129.83 '
+          export NVM_DIR="$HOME/.nvm"
+
+          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+          nvm use 16.20.2
+
+          node -v
+          npm -v
+
+          cd ~/seo-app
+
+          git pull
+
+          cd server
+          npm install
+
+          cd ../client
+          npm install
+          npm run build
+
+          pm2 restart backend
+          pm2 restart frontend
+
+          pm2 save
+        '
 
 workflows:
-  deploy:
-    jobs:
-      - deploy
+version: 2
+
+deploy:
+jobs:
+- deploy:
+filters:
+branches:
+only:
+- main
