@@ -3,39 +3,27 @@ version: 2.1
 jobs:
   deploy:
     docker:
-      - image: cimg/node:16.20
+      - image: cimg/base:stable
 
     steps:
       - checkout
 
+      - add_ssh_keys
+
       - run:
-          name: Deploy to EC2
+          name: Deploy
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@3.120.129.83 "
+            ssh -o StrictHostKeyChecking=no ubuntu@3.120.129.83 '
               cd ~/seo-app &&
-
               git pull &&
-
-              cd server &&
-              npm install &&
-
-              cd ../client &&
-              npm install &&
+              cd client &&
               npm run build &&
-
-              pm2 restart backend &&
               pm2 restart frontend &&
-
+              pm2 restart backend &&
               pm2 save
-            "
+            '
 
 workflows:
-  version: 2
-
   deploy:
     jobs:
-      - deploy:
-          filters:
-            branches:
-              only:
-                - main
+      - deploy
