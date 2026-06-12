@@ -1,3 +1,5 @@
+version: 2.1
+
 jobs:
 deploy:
 docker:
@@ -13,6 +15,7 @@ steps:
       command: |
         ssh -o StrictHostKeyChecking=no ubuntu@3.120.129.83 '
           export NVM_DIR="$HOME/.nvm"
+
           [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
           nvm use 16.20.2
@@ -38,8 +41,6 @@ steps:
         '
 
 workflows:
-version: 2
-
 deploy:
 jobs:
 - deploy:
