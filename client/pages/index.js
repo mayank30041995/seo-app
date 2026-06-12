@@ -96,7 +96,7 @@ const Home = ({ categories }) => {
 
       <div className="row pt-5">
         <h2 className="font-weight-bold pb-3">
-          Trending Links@@@@ {popular.length}
+          Trending Links {popular.length}
         </h2>
         {<div className="col-md-12 overflow-hidden">{listOfLinks()}</div>}
       </div>
